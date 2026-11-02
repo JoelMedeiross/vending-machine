@@ -1,6 +1,6 @@
 # Vending Machine Intelligent Management
 
-Projeto desenvolvido para a disciplina de Gestão/Engenharia de Software.
+Projeto desenvolvido para a disciplina de Big Data.
 
 ## Descrição
 Sistema de gerenciamento inteligente de Máquina de Vendas (Vending Machine), estruturado sob a arquitetura MVC (Model-View-Controller) para separação de responsabilidades.
