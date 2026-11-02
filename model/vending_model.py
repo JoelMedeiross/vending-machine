@@ -1,11 +1,12 @@
-# model/vending_model.py
 import pandas as pd
-import datetime
 
 class VendingModel:
     def __init__(self):
-        # Inicializa o estado se não existir
-        pass
+        self.admin_user = "admin"
+        self.admin_pass = "1234"
+
+    def verificar_login(self, usuario, senha):
+        return usuario == self.admin_user and senha == self.admin_pass
 
     def get_transacoes_iniciais(self):
         return pd.DataFrame({
