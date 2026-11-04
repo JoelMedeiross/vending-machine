@@ -1,6 +1,7 @@
 # model/vending_model.py
 import pandas as pd
 import os
+import hashlib
 
 class VendingModel:
     def __init__(self):
@@ -10,7 +11,6 @@ class VendingModel:
 
     def garantir_ficheiros_existem(self):
         """Garante que os ficheiros de dados locais existem na raiz do projeto."""
-        # Cria o CSV de produtos se não existir
         if not os.path.exists(self.csv_path):
             df_inicial = pd.DataFrame({
                 "produto": ["Água", "Refrigerante", "Salgado", "Chocolate"],
@@ -19,27 +19,32 @@ class VendingModel:
             })
             df_inicial.to_csv(self.csv_path, index=False)
             
-        # Cria o CSV de credenciais do gestor separadamente (fora do código Python)
+        # Cria apenas a estrutura vazia para o admin, SEM NENHUMA SENHA NO CÓDIGO
         if not os.path.exists(self.admin_csv_path):
-            df_admin = pd.DataFrame({
-                "usuario": ["admin"],
-                "senha": ["1234"]
-            })
+            df_admin = pd.DataFrame(columns=["usuario", "senha"])
             df_admin.to_csv(self.admin_csv_path, index=False)
 
     def verificar_login(self, usuario, senha):
-        #Verifica o login consultando o ficheiro CSV externo, sem dados fixos no código.
+        """Verifica o login comparando o hash da senha introduzida com o hash guardado no ficheiro local."""
         try:
             if os.path.exists(self.admin_csv_path):
                 df_admin = pd.read_csv(self.admin_csv_path)
-                match = df_admin[(df_admin['usuario'] == usuario) & (df_admin['senha'] == senha)]
+                if df_admin.empty:
+                    return False
+                
+                # Cifra a palavra-passe introduzida para comparar com a que tens guardada no teu PC
+                senha_digitada_cifrada = hashlib.sha256(senha.encode()).hexdigest()
+                
+                match = df_admin[
+                    (df_admin['usuario'] == usuario) & 
+                    (df_admin['senha'] == senha_digitada_cifrada)
+                ]
                 return not match.empty
         except Exception:
             pass
         return False
 
     def get_estoque_inicial(self):
-        #Lê os dados de stock diretamente da base de dados local em CSV.
         try:
             return pd.read_csv(self.csv_path)
         except Exception:
@@ -50,7 +55,6 @@ class VendingModel:
             })
 
     def atualizar_estoque(self, produto_escolhido, qtd_comprada):
-        #Atualiza o stock após uma compra e persiste os dados no ficheiro CSV local.
         df = self.get_estoque_inicial()
         if produto_escolhido in df['produto'].values:
             df.loc[df['produto'] == produto_escolhido, 'estoque_atual'] -= qtd_comprada
@@ -58,7 +62,6 @@ class VendingModel:
             df.to_csv(self.csv_path, index=False)
 
     def get_transacoes_iniciais(self):
-        #Histórico de transações simulado para alimentar os gráficos do gestor.
         return pd.DataFrame({
             "timestamp": pd.date_range(start="2026-10-01", periods=20, freq="h"),
             "produto": ["Água", "Refrigerante", "Salgado", "Chocolate"] * 5,
@@ -67,7 +70,6 @@ class VendingModel:
         })
 
     def calcular_ponto_de_pedido(self, df_trans, df_est, lead_time=2, estoque_seguranca=3):
-        #Calcula o Ponto de Pedido (PP) e gera os alertas de stock crítico.
         vendas_agrupadas = df_trans.groupby('produto')['quantidade'].sum().reset_index()
         analise = df_est.merge(vendas_agrupadas, on='produto', how='left').fillna(0)
         analise['consumo_diario'] = analise['quantidade'] / 30
