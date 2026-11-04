@@ -4,13 +4,13 @@ import os
 
 class VendingModel:
     def __init__(self):
-        self.admin_user = "admin"
-        self.admin_pass = "1234"
         self.csv_path = "dados_vending.csv"
-        self.garantir_csv_existe()
+        self.admin_csv_path = "dados_admin.csv"
+        self.garantir_ficheiros_existem()
 
-    def garantir_csv_existe(self):
-        #Garante que a base de dados local em CSV da vending machine está criada e pronta.
+    def garantir_ficheiros_existem(self):
+        """Garante que os ficheiros de dados locais existem na raiz do projeto."""
+        # Cria o CSV de produtos se não existir
         if not os.path.exists(self.csv_path):
             df_inicial = pd.DataFrame({
                 "produto": ["Água", "Refrigerante", "Salgado", "Chocolate"],
@@ -18,12 +18,28 @@ class VendingModel:
                 "preco_unitario": [4.00, 6.00, 8.00, 5.00]
             })
             df_inicial.to_csv(self.csv_path, index=False)
+            
+        # Cria o CSV de credenciais do gestor separadamente (fora do código Python)
+        if not os.path.exists(self.admin_csv_path):
+            df_admin = pd.DataFrame({
+                "usuario": ["admin"],
+                "senha": ["1234"]
+            })
+            df_admin.to_csv(self.admin_csv_path, index=False)
 
     def verificar_login(self, usuario, senha):
-        return usuario == self.admin_user and senha == self.admin_pass
+        #Verifica o login consultando o ficheiro CSV externo, sem dados fixos no código.
+        try:
+            if os.path.exists(self.admin_csv_path):
+                df_admin = pd.read_csv(self.admin_csv_path)
+                match = df_admin[(df_admin['usuario'] == usuario) & (df_admin['senha'] == senha)]
+                return not match.empty
+        except Exception:
+            pass
+        return False
 
     def get_estoque_inicial(self):
-        #Lê os dados de stock diretamente da base de dados local em CSV usando o Pandas.
+        #Lê os dados de stock diretamente da base de dados local em CSV.
         try:
             return pd.read_csv(self.csv_path)
         except Exception:
@@ -38,7 +54,6 @@ class VendingModel:
         df = self.get_estoque_inicial()
         if produto_escolhido in df['produto'].values:
             df.loc[df['produto'] == produto_escolhido, 'estoque_atual'] -= qtd_comprada
-            # Garante que o stock nunca fica negativo
             df.loc[df['estoque_atual'] < 0, 'estoque_atual'] = 0
             df.to_csv(self.csv_path, index=False)
 
