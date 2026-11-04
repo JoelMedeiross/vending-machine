@@ -7,11 +7,11 @@ Sistema de gerenciamento inteligente de Máquina de Vendas (Vending Machine), es
 
 ## Integrantes do Grupo
 - Joel Medeiros
-- Kalil Maia
-- Kauan Pimentel
-- Daniel Luiz
-- Matheus Garcia
-- Renato Leal
+- 
+- 
+- 
+- 
+- 
 
 ## Tecnologias Utilizadas
 - Python
