@@ -10,7 +10,7 @@ Sistema de gerenciamento inteligente de Máquina de Vendas (Vending Machine), es
 - Kalil Maia
 - Daniel Luiz
 - Renato leal
-- 
+- Kauan Pimentel
 - 
 
 ## Tecnologias Utilizadas
