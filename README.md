@@ -8,7 +8,7 @@ Sistema de gerenciamento inteligente de Máquina de Vendas (Vending Machine), es
 ## Integrantes do Grupo
 - Joel Medeiros
 - Kalil Maia
-- 
+- Daniel Luiz
 - 
 - 
 - 
