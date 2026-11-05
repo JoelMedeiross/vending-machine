@@ -9,7 +9,7 @@ Sistema de gerenciamento inteligente de Máquina de Vendas (Vending Machine), es
 - Joel Medeiros
 - Kalil Maia
 - Daniel Luiz
-- 
+- Renato leal
 - 
 - 
 
